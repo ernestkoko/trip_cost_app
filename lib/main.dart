@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -8,26 +10,35 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Hello You',
+      title: 'Trip Cost Calculator',
       theme: ThemeData(
 
         primarySwatch: Colors.blue,
       ),
-      home: HelloYou(),
+      home: FuelForm(),
     );
   }
 }
 
-class HelloYou extends StatefulWidget{
+class FuelForm extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _HelloYou();
+  State<StatefulWidget> createState() => _FuelFormState();
 
 }
 
-class _HelloYou extends State<HelloYou>{
-  String name = '';
+class _FuelFormState extends State<FuelForm> {
+  String result = '';
+  final _currencies = ["Dollars", "Euro", "Pounds"];
+  String _currency = "Dollars";
+
+  TextEditingController distanceController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    TextStyle textStyle = Theme
+        .of(context)
+        .textTheme
+        .title;
 
     return Scaffold(
       appBar: AppBar(
@@ -39,20 +50,59 @@ class _HelloYou extends State<HelloYou>{
         child: Column(
           children: <Widget>[
             TextField(
+              controller: distanceController,
               decoration: InputDecoration(
-                hintText: "Please Insert Your Name",
+                labelText: "Distance",
+                hintText: "e.g 123",
+                labelStyle: textStyle,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                ),
               ),
-              onChanged: (String string ){
+              keyboardType: TextInputType.number,
+//              onChanged: (String string) {
+//                setState(() {
+//                  name = string;
+//                });
+//              },
+            ),
+            DropdownButton<String>(
+              items: _currencies.map((String value){
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+            },).toList(),
+              value: _currency,
+              onChanged: (String value ){
+                _onDropDownChnaged(value);
+
+              },
+
+            ),
+            RaisedButton(
+              onPressed: (){
                 setState(() {
-                  name = string;
+                  result = distanceController.text;
                 });
               },
+              color: Theme.of(context).primaryColorDark,
+              textColor: Theme.of(context).primaryColorLight,
+              child: Text("Submit",
+              textScaleFactor: 1.5,),
+
             ),
-            Text("Hello " + name + "!"),
+            Text( result ),
           ],
         ),
       ),
     );
+  }
+
+  _onDropDownChnaged(String value) {
+    setState(() {
+      this._currency = value;
+    });
   }
 
 }
